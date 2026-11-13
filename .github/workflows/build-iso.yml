@@ -1,0 +1,29 @@
+name: Build Kaming OS ISO
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged   # обязательно для mkarchiso
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install archiso
+        run: pacman -Syu --noconfirm archiso
+
+      - name: Build ISO
+        run: ./scripts/build-iso.sh
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaming-os-iso
+          path: out/*.iso
