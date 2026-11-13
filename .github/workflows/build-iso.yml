@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
-      options: --privileged   # Обязательно для работы mkarchiso
+      options: --privileged
 
     steps:
       - name: Checkout repository
@@ -18,8 +18,12 @@ jobs:
 
       - name: Install archiso and dependencies
         run: |
+          # Синхронизируем базы данных
           pacman -Sy --noconfirm
-          pacman -S --noconfirm --needed --assume-installed libcrypto.so=3-64 --assume-installed libssl.so=3-64 archiso
+          
+          # Устанавливаем archiso и grub (для режима uefi.grub)
+          # Флаг --assume-installed оставлен для обхода временного конфликта OpenSSL
+          pacman -S --noconfirm --needed --assume-installed libcrypto.so=3-64 --assume-installed libssl.so=3-64 archiso grub
 
       - name: Make script executable
         run: chmod +x ./scripts/build-iso.sh
