@@ -18,16 +18,14 @@ jobs:
 
       - name: Install archiso and dependencies
         run: |
-          # Синхронизируем базы данных, но НЕ обновляем всю систему (-Sy вместо -Syu)
           pacman -Sy --noconfirm
-          
-          # Устанавливаем archiso. 
-          # Флаг --assume-installed нужен, чтобы обойти временный баг репозиториев Arch,
-          # где openssl обновился, а зависимые пакеты еще нет.
           pacman -S --noconfirm --needed --assume-installed libcrypto.so=3-64 --assume-installed libssl.so=3-64 archiso
 
+      - name: Make script executable
+        run: chmod +x ./scripts/build-iso.sh
+
       - name: Build ISO
-        run: ./scripts/build-iso.sh
+        run: bash ./scripts/build-iso.sh
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
